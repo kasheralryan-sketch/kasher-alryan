@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الريان للأدوات المنزلية - إدارة العملاء</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2c6b9e;
+      --secondary: #e8b344;
+      --accent: #3a9e7c;
+      --light: #f8f9fa;
+      --dark: #2d3e50;
+      --danger: #dc3545;
+      --success: #28a745;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: #f4f6f9;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 15px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    
+    .logo i {
+      font-size: 2.5rem;
+      margin-left: 10px;
+      color: var(--secondary);
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .search-container {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 15px;
+      padding-right: 45px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+    }
+
+    .filter-btn {
+      padding: 12px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .customer-card {
+      background: #fff;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border-left: 4px solid var(--primary);
+    }
+
+    .customer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .customer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .customer-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .customer-phone {
+      color: #666;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .balance-info {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .balance-item {
+      padding: 10px 15px;
+      border-radius: 8px;
+      background: var(--light);
+      flex: 1;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .balance-item h3 {
+      margin: 0 0 5px 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .balance-item .amount {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .total-paid {
+      color: var(--success);
+    }
+
+    .total-remain {
+      color: var(--danger);
+    }
+
+    .customer-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .action-btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .action-btn.success {
+      background: var(--success);
+      color: white;
+    }
+
+    .action-btn.warning {
+      background: var(--warning);
+      color: #333;
+    }
+
+    .action-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .invoice-list {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .invoice-item {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .invoice-date {
+      font-weight: bold;
+      color: var(--dark);
+    }
+
+    .invoice-amount {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .invoice-amount > div {
+      padding: 5px 10px;
+      border-radius: 5px;
+      background: #eee;
+      font-size: 0.9rem;
+    }
+
+    .invoice-products {
+      margin-top: 10px;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .product-list {
+      margin-top: 10px;
+    }
+
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .product-item:last-child {
+      border-bottom: none;
+    }
+
+    .payment-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f0f8ff;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .payment-form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .payment-form input {
+      flex: 1;
+      min-width: 150px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .payment-form button {
+      padding: 10px 15px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--box-shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background: var(--success);
+      color: white;
+      border-radius: 8px;
+      box-shadow: var(--box-shadow);
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.3s;
+    }
+    
+    .toast.error {
+      background: var(--danger);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Loader */
+    .loader {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .loader .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .customer-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .balance-info {
+        flex-direction: column;
+      }
+      
+      .invoice-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .header-actions {
+        flex-direction: column;
+      }
+      
+      .search-container {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <i class="fas fa-users"></i>
+        <h1>الريان للأدوات المنزلية - إدارة العملاء</h1>
+      </div>
+      
+      <div class="header-actions">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="customerSearch" class="search-input" placeholder="ابحث عن عميل بالاسم أو الهاتف...">
+        </div>
+        
+        <button class="filter-btn" id="filterBtn">
+          <i class="fas fa-filter"></i> تصفية
+        </button>
+      </div>
+    </header>
+
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <p>جاري تحميل البيانات...</p>
+    </div>
+
+    <div id="customersList"></div>
+  </div>
+
+  <!-- Modal لإضافة دفعة -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">إضافة دفعة جديدة</h2>
+        <button class="close-modal" id="closeModal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>العميل:</label>
+          <input type="text" id="modalCustomerName" readonly class="search-input">
+        </div>
+        
+        <div class="form-group">
+          <label>رقم الهاتف:</label>
+          <input type="text" id="modalCustomerPhone" readonly class="search-input">
+        </div>
+        
+        <div class="form-group">
+          <label>المبلغ المتبقي:</label>
+          <input type="text" id="modalRemainingAmount" readonly class="search-input">
+        </div>
+        
+        <div class="form-group">
+          <label>المبلغ المدفوع:</label>
+          <input type="number" id="paymentAmount" class="search-input" placeholder="أدخل المبلغ المدفوع" min="1">
+        </div>
+        
+        <div class="form-group">
+          <label>تاريخ الدفعة:</label>
+          <input type="date" id="paymentDate" class="search-input" value="">
+        </div>
+        
+        <div class="form-group">
+          <label>ملاحظات (اختياري):</label>
+          <textarea id="paymentNotes" class="search-input" placeholder="ملاحظات حول الدفعة..." rows="3"></textarea>
+        </div>
+        
+        <button id="savePayment" class="action-btn success" style="width: 100%; margin-top: 15px;">
+          <i class="fas fa-save"></i> حفظ الدفعة
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      getDocs, 
+      query, 
+      where, 
+      updateDoc, 
+      doc, 
+      addDoc,
+      arrayUnion,
+      Timestamp 
+    } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN5wPlEF_qANe8OSDESbveo_AMqYMCZLQ",
+      authDomain: "kcher-dbb85.firebaseapp.com",
+      projectId: "kcher-dbb85",
+      storageBucket: "kcher-dbb85.firebasestorage.app",
+      messagingSenderId: "83988845713",
+      appId: "1:83988845713:web:4ef27c1da86ea07c8c1b30",
+      measurementId: "G-VLGGZEM1YN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // عناصر DOM
+    const customersList = document.getElementById("customersList");
+    const customerSearch = document.getElementById("customerSearch");
+    const loader = document.getElementById("loader");
+    const toast = document.getElementById("toast");
+    const paymentModal = document.getElementById("paymentModal");
+    const closeModal = document.getElementById("closeModal");
+    const savePaymentBtn = document.getElementById("savePayment");
+
+    // المتغيرات العامة
+    let customers = [];
+    let selectedCustomer = null;
+
+    // تحميل الفواتير وتصنيف العملاء
+    async function loadCustomers() {
+      loader.style.display = "block";
+      customersList.innerHTML = "";
+      
+      try {
+        const q = query(collection(db, "invoices"));
+        const snapshot = await getDocs(q);
+
+        let customersMap = {};
+
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const invoiceId = docSnap.id;
+
+          if (data.type === "installment" && data.customer) {
+            const key = data.customer.phone;
+            
+            if (!customersMap[key]) {
+              customersMap[key] = {
+                name: data.customer.name,
+                phone: data.customer.phone,
+                invoices: [],
+                totalPaid: 0,
+                totalRemain: 0
+              };
+            }
+            
+            const paid = data.paid || 0;
+            const remain = data.remain || 0;
+            
+            customersMap[key].invoices.push({
+              id: invoiceId,
+              total: data.total,
+              paid: paid,
+              remain: remain,
+              date: data.date,
+              products: data.products || []
+            });
+            
+            customersMap[key].totalPaid += paid;
+            customersMap[key].totalRemain += remain;
+          }
+        });
+
+        customers = Object.values(customersMap);
+        renderCustomers(customers);
+        
+      } catch (error) {
+        console.error("Error loading customers: ", error);
+        showToast("حدث خطأ في تحميل بيانات العملاء", "error");
+      } finally {
+        loader.style.display = "none";
+      }
+    }
+
+    // عرض العملاء
+    function renderCustomers(customersListData) {
+      customersList.innerHTML = "";
+      
+      if (customersListData.length === 0) {
+        customersList.innerHTML = `
+          <div style="text-align: center; padding: 30px; background: white; border-radius: 12px; box-shadow: var(--box-shadow);">
+            <i class="fas fa-users" style="font-size: 3rem; color: #ddd; margin-bottom: 15px;"></i>
+            <h3 style="color: #666;">لا يوجد عملاء حالياً</h3>
+            <p>سيظهر العملاء هنا عند إضافة فواتير تقسيط</p>
+          </div>
+        `;
+        return;
+      }
+      
+      customersListData.forEach(customer => {
+        const card = document.createElement("div");
+        card.className = "customer-card";
+        
+        card.innerHTML = `
+          <div class="customer-header">
+            <div>
+              <div class="customer-name">${customer.name}</div>
+              <div class="customer-phone"><i class="fas fa-phone"></i> ${customer.phone}</div>
+            </div>
+            <div class="balance-info">
+              <div class="balance-item">
+                <h3>إجمالي المدفوع</h3>
+                <div class="amount total-paid">${customer.totalPaid.toLocaleString()} ج.م</div>
+              </div>
+              <div class="balance-item">
+                <h3>إجمالي المتبقي</h3>
+                <div class="amount total-remain">${customer.totalRemain.toLocaleString()} ج.م</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="customer-actions">
+            <button class="action-btn primary view-invoices" data-phone="${customer.phone}">
+              <i class="fas fa-receipt"></i> عرض الفواتير
+            </button>
+            <button class="action-btn success add-payment" data-phone="${customer.phone}">
+              <i class="fas fa-money-bill-wave"></i> إضافة دفعة
+            </button>
+          </div>
+          
+          <div class="invoice-list" id="invoices-${customer.phone}"></div>
+        `;
+        
+        customersList.appendChild(card);
+      });
+      
+      // إضافة event listeners للأزرار
+      document.querySelectorAll('.view-invoices').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const phone = this.getAttribute('data-phone');
+          toggleInvoices(phone);
+        });
+      });
+      
+      document.querySelectorAll('.add-payment').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const phone = this.getAttribute('data-phone');
+          openPaymentModal(phone);
+        });
+      });
+    }
+
+    // عرض/إخفاء الفواتير
+    function toggleInvoices(phone) {
+      const invoiceList = document.getElementById(`invoices-${phone}`);
+      const customer = customers.find(c => c.phone === phone);
+      
+      if (invoiceList.style.display === "block") {
+        invoiceList.style.display = "none";
+        invoiceList.innerHTML = "";
+        return;
+      }
+      
+      invoiceList.style.display = "block";
+      invoiceList.innerHTML = "";
+      
+      if (!customer || customer.invoices.length === 0) {
+        invoiceList.innerHTML = `<p style="text-align: center; padding: 15px; color: #666;">لا توجد فواتير لهذا العميل</p>`;
+        return;
+      }
+      
+      customer.invoices.forEach(invoice => {
+        const invoiceDate = new Date(invoice.date).toLocaleDateString('ar-EG');
+        
+        const invoiceEl = document.createElement("div");
+        invoiceEl.className = "invoice-item";
+        invoiceEl.innerHTML = `
+          <div class="invoice-header">
+            <div class="invoice-date">فاتورة بتاريخ: ${invoiceDate}</div>
+            <div class="invoice-amount">
+              <div>الإجمالي: ${invoice.total.toLocaleString()} ج.م</div>
+              <div>المدفوع: ${invoice.paid.toLocaleString()} ج.م</div>
+              <div>المتبقي: ${invoice.remain.toLocaleString()} ج.م</div>
+            </div>
+          </div>
+          
+          <div class="invoice-products">
+            <h4><i class="fas fa-shopping-cart"></i> المنتجات:</h4>
+            <div class="product-list">
+              ${invoice.products.map(product => `
+                <div class="product-item">
+                  <span>${product.name} × ${product.quantity}</span>
+                  <span>${(product.quantity * product.salePrice).toLocaleString()} ج.م</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        
+        invoiceList.appendChild(invoiceEl);
+      });
+    }
+
+    // فتح modal إضافة دفعة
+    function openPaymentModal(phone) {
+      const customer = customers.find(c => c.phone === phone);
+      if (!customer) return;
+      
+      selectedCustomer = customer;
+      
+      document.getElementById('modalCustomerName').value = customer.name;
+      document.getElementById('modalCustomerPhone').value = customer.phone;
+      document.getElementById('modalRemainingAmount').value = customer.totalRemain.toLocaleString() + ' ج.م';
+      document.getElementById('paymentAmount').value = '';
+      document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('paymentNotes').value = '';
+      
+      paymentModal.style.display = 'flex';
+    }
+
+    // حفظ الدفعة
+    savePaymentBtn.addEventListener('click', async function() {
+      const amount = parseFloat(document.getElementById('paymentAmount').value);
+      const date = document.getElementById('paymentDate').value;
+      const notes = document.getElementById('paymentNotes').value;
+      
+      if (!amount || amount <= 0) {
+        showToast("يرجى إدخال مبلغ صحيح", "error");
+        return;
+      }
+      
+      if (amount > selectedCustomer.totalRemain) {
+        showToast("المبلغ المدخل أكبر من المبلغ المتبقي", "error");
+        return;
+      }
+      
+      try {
+        // هنا سيتم حفظ الدفعة في قاعدة البيانات
+        // في هذا المثال، سنقوم بتحديث الفواتير ذات الصلة
+        
+        // البحث عن الفواتير التي لها رصيد متبقي
+        const invoicesWithBalance = selectedCustomer.invoices.filter(inv => inv.remain > 0);
+        
+        // نرتب الفواتير من الأقدم إلى الأحدث
+        invoicesWithBalance.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        let remainingAmount = amount;
+        
+        // نوزع الدفعة على الفواتير
+        for (const invoice of invoicesWithBalance) {
+          if (remainingAmount <= 0) break;
+          
+          const paymentAmount = Math.min(remainingAmount, invoice.remain);
+          
+          // تحديث الفاتورة في قاعدة البيانات
+          const invoiceRef = doc(db, "invoices", invoice.id);
+          await updateDoc(invoiceRef, {
+            paid: invoice.paid + paymentAmount,
+            remain: invoice.remain - paymentAmount
+          });
+          
+          // إضافة سجل الدفعة
+          await addDoc(collection(db, "payments"), {
+            customerPhone: selectedCustomer.phone,
+            customerName: selectedCustomer.name,
+            invoiceId: invoice.id,
+            amount: paymentAmount,
+            date: Timestamp.fromDate(new Date(date)),
+            notes: notes,
+            createdAt: Timestamp.now()
+          });
+          
+          remainingAmount -= paymentAmount;
+        }
+        
+        showToast("تم حفظ الدفعة بنجاح");
+        paymentModal.style.display = 'none';
+        
+        // إعادة تحميل البيانات
+        loadCustomers();
+        
+      } catch (error) {
+        console.error("Error saving payment: ", error);
+        showToast("حدث خطأ أثناء حفظ الدفعة", "error");
+      }
+    });
+
+    // البحث عن العملاء
+    customerSearch.addEventListener('input', function() {
+      const keyword = this.value.trim().toLowerCase();
+      
+      if (!keyword) {
+        renderCustomers(customers);
+        return;
+      }
+      
+      const filteredCustomers = customers.filter(customer => 
+        customer.name.toLowerCase().includes(keyword) || 
+        customer.phone.includes(keyword)
+      );
+      
+      renderCustomers(filteredCustomers);
+    });
+
+    // إغلاق modal
+    closeModal.addEventListener('click', function() {
+      paymentModal.style.display = 'none';
+    });
+
+    // إغلاق modal عند النقر خارج المحتوى
+    window.addEventListener('click', function(event) {
+      if (event.target === paymentModal) {
+        paymentModal.style.display = 'none';
+      }
+    });
+
+    // عرض الإشعارات
+    function showToast(message, type = "success") {
+      toast.textContent = message;
+      toast.className = `toast ${type}`;
+      toast.style.display = "block";
+      
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 3000);
+    }
+
+    // تحميل البيانات عند بدء التشغيل
+    document.addEventListener('DOMContentLoaded', function() {
+      // تعيين تاريخ اليوم كقيمة افتراضية
+      document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+      loadCustomers();
+    });
+  </script>
+</body>
+</html>
