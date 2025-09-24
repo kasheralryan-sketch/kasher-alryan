@@ -16,6 +16,7 @@
       --danger-color: #dc3545;
       --success-color: #28a745;
       --warning-color: #ffc107;
+      --info-color: #17a2b8;
       --shadow: 0 4px 12px rgba(0,0,0,0.1);
       --transition: all 0.3s ease;
     }
@@ -123,7 +124,7 @@
       font-weight: 500;
     }
 
-    input, button {
+    input, button, select {
       width: 100%;
       padding: 12px 15px;
       border-radius: 8px;
@@ -132,7 +133,7 @@
       font-size: 1rem;
     }
     
-    input:focus {
+    input:focus, select:focus {
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(44, 107, 158, 0.2);
@@ -175,31 +176,18 @@
       background: #bd2130;
     }
 
-    /* البحث */
-    .search-box {
+    /* البحث والتصفية */
+    .search-filter {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 15px;
       margin-bottom: 20px;
     }
     
-    .search-box input {
-      width: 100%;
-      padding: 12px 15px;
-      padding-right: 45px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      font-family: 'Tajawal', sans-serif;
-      font-size: 1rem;
-    }
-    
-    .search-container {
-      position: relative;
-    }
-    
-    .search-icon {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #777;
+    @media (max-width: 768px) {
+      .search-filter {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* الجدول */
@@ -320,6 +308,23 @@
       to { opacity: 0.9; transform: translateY(0); }
     }
 
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 8px;
+    }
+    
+    .pagination button {
+      width: auto;
+      padding: 8px 15px;
+    }
+    
+    .pagination button.active {
+      background: var(--accent-color);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .header-content {
@@ -423,6 +428,19 @@
         </div>
         
         <div class="form-group">
+          <label for="category">الفئة</label>
+          <select id="category" required>
+            <option value="">اختر الفئة</option>
+            <option value="أدوات مطبخ">أدوات مطبخ</option>
+            <option value="أدوات تنظيف">أدوات تنظيف</option>
+            <option value="أثاث منزلي">أثاث منزلي</option>
+            <option value="إلكترونيات">إلكترونيات</option>
+            <option value="أدوات حدائق">أدوات حدائق</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
           <label for="quantity">الكمية المتاحة</label>
           <input type="number" id="quantity" placeholder="الكمية" min="0" required>
         </div>
@@ -437,18 +455,36 @@
           <input type="number" id="salePrice" placeholder="سعر البيع" min="0" step="0.01" required>
         </div>
         
+        <div class="form-group">
+          <label for="minStock">الحد الأدنى للكمية</label>
+          <input type="number" id="minStock" placeholder="الحد الأدنى" min="0" value="5">
+        </div>
+        
         <button type="submit" id="submitBtn">
           <i class="fas fa-save"></i> حفظ المنتج
         </button>
       </form>
     </div>
 
-    <!-- البحث -->
+    <!-- البحث والتصفية -->
     <div class="card">
-      <div class="search-container">
-        <div class="search-box">
-          <i class="fas fa-search search-icon"></i>
-          <input type="text" id="searchInput" placeholder="ابحث بالاسم أو الباركود...">
+      <div class="search-filter">
+        <div class="form-group">
+          <label for="searchInput">بحث سريع</label>
+          <input type="text" id="searchInput" placeholder="🔍 ابحث بالاسم أو الباركود...">
+        </div>
+        
+        <div class="form-group">
+          <label for="categoryFilter">تصفية حسب الفئة</label>
+          <select id="categoryFilter">
+            <option value="">جميع الفئات</option>
+            <option value="أدوات مطبخ">أدوات مطبخ</option>
+            <option value="أدوات تنظيف">أدوات تنظيف</option>
+            <option value="أثاث منزلي">أثاث منزلي</option>
+            <option value="إلكترونيات">إلكترونيات</option>
+            <option value="أدوات حدائق">أدوات حدائق</option>
+            <option value="أخرى">أخرى</option>
+          </select>
         </div>
       </div>
     </div>
@@ -463,6 +499,7 @@
             <tr>
               <th>الباركود</th>
               <th>الاسم</th>
+              <th>الفئة</th>
               <th>الكمية</th>
               <th>سعر الشراء</th>
               <th>سعر البيع</th>
@@ -475,6 +512,9 @@
       
       <!-- بطاقات للعرض على الموبايل -->
       <div class="mobile-cards" id="productsCards"></div>
+      
+      <!-- الترقيم -->
+      <div class="pagination" id="pagination"></div>
     </div>
   </div>
 
@@ -483,7 +523,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
     // إعداد Firebase
     const firebaseConfig = {
@@ -505,12 +545,17 @@
     const productsTableBody = document.querySelector("#productsTable");
     const productsCards = document.getElementById("productsCards");
     const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
     const toast = document.getElementById("toast");
     const submitBtn = document.getElementById("submitBtn");
+    const paginationElement = document.getElementById("pagination");
 
     // المتغيرات العامة
     let allProducts = [];
     let currentEditId = null;
+    const productsPerPage = 10;
+    let currentPage = 1;
+    let filteredProducts = [];
 
     // عرض الإشعارات
     function showToast(msg, type = "success") {
@@ -537,7 +582,7 @@
           allProducts.push({ id: docSnap.id, ...docSnap.data() });
         });
         
-        renderProducts();
+        applyFilters();
       } catch (error) {
         console.error("Error loading products: ", error);
         showToast("❌ حدث خطأ في تحميل المنتجات", "error");
@@ -547,24 +592,38 @@
       }
     }
 
+    // تطبيق عوامل التصفية والبحث
+    function applyFilters() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const category = categoryFilter.value;
+      
+      filteredProducts = allProducts.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                             product.barcode.includes(searchTerm);
+        const matchesCategory = !category || product.category === category;
+        
+        return matchesSearch && matchesCategory;
+      });
+      
+      renderProducts();
+      setupPagination();
+    }
+
     // عرض المنتجات في الجدول والبطاقات
     function renderProducts() {
       productsTableBody.innerHTML = "";
       productsCards.innerHTML = "";
       
-      const searchTerm = searchInput.value.trim().toLowerCase();
-      const filteredProducts = allProducts.filter(product => {
-        return product.name.toLowerCase().includes(searchTerm) || 
-               product.barcode.includes(searchTerm);
-      });
+      const startIndex = (currentPage - 1) * productsPerPage;
+      const paginatedProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage);
       
-      if (filteredProducts.length === 0) {
-        productsTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px;">لا توجد منتجات</td></tr>`;
+      if (paginatedProducts.length === 0) {
+        productsTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px;">لا توجد منتجات</td></tr>`;
         productsCards.innerHTML = `<div class="product-card" style="text-align: center;">لا توجد منتجات</div>`;
         return;
       }
       
-      filteredProducts.forEach(product => {
+      paginatedProducts.forEach(product => {
         addRow(product);
         addCard(product);
       });
@@ -578,13 +637,14 @@
       let stockStatus = "";
       if (product.quantity == 0) {
         stockStatus = '<span class="out-of-stock">نفذت الكمية</span>';
-      } else if (product.quantity <= 5) {
+      } else if (product.quantity <= (product.minStock || 5)) {
         stockStatus = '<span class="low-stock">كمية قليلة</span>';
       }
       
       row.innerHTML = `
         <td>${product.barcode}</td>
         <td>${product.name}</td>
+        <td>${product.category || "غير محدد"}</td>
         <td>${stockStatus} ${product.quantity}</td>
         <td>${product.purchasePrice} ج.م</td>
         <td>${product.salePrice} ج.م</td>
@@ -606,7 +666,7 @@
       let stockStatus = "";
       if (product.quantity == 0) {
         stockStatus = '<span class="out-of-stock">نفذت الكمية</span>';
-      } else if (product.quantity <= 5) {
+      } else if (product.quantity <= (product.minStock || 5)) {
         stockStatus = '<span class="low-stock">كمية قليلة</span>';
       }
       
@@ -615,6 +675,7 @@
       card.innerHTML = `
         <div><strong>الباركود:</strong> ${product.barcode}</div>
         <div><strong>الاسم:</strong> ${product.name}</div>
+        <div><strong>الفئة:</strong> ${product.category || "غير محدد"}</div>
         <div><strong>الكمية:</strong> ${stockStatus} ${product.quantity}</div>
         <div><strong>سعر الشراء:</strong> ${product.purchasePrice} ج.م</div>
         <div><strong>سعر البيع:</strong> ${product.salePrice} ج.م</div>
@@ -630,6 +691,50 @@
       productsCards.appendChild(card);
     }
 
+    // إعداد نظام الترقيم
+    function setupPagination() {
+      paginationElement.innerHTML = "";
+      const pageCount = Math.ceil(filteredProducts.length / productsPerPage);
+      
+      if (pageCount <= 1) return;
+      
+      // زر الصفحة السابقة
+      if (currentPage > 1) {
+        const prevButton = document.createElement("button");
+        prevButton.innerText = "السابق";
+        prevButton.addEventListener("click", () => {
+          currentPage--;
+          renderProducts();
+        });
+        paginationElement.appendChild(prevButton);
+      }
+      
+      // أزرار الصفحات
+      for (let i = 1; i <= pageCount; i++) {
+        const pageButton = document.createElement("button");
+        pageButton.innerText = i;
+        if (i === currentPage) {
+          pageButton.classList.add("active");
+        }
+        pageButton.addEventListener("click", () => {
+          currentPage = i;
+          renderProducts();
+        });
+        paginationElement.appendChild(pageButton);
+      }
+      
+      // زر الصفحة التالية
+      if (currentPage < pageCount) {
+        const nextButton = document.createElement("button");
+        nextButton.innerText = "التالي";
+        nextButton.addEventListener("click", () => {
+          currentPage++;
+          renderProducts();
+        });
+        paginationElement.appendChild(nextButton);
+      }
+    }
+
     // إضافة أو تعديل منتج
     productForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -638,9 +743,11 @@
       const product = {
         barcode: document.getElementById("barcode").value,
         name: document.getElementById("name").value,
+        category: document.getElementById("category").value,
         quantity: parseInt(document.getElementById("quantity").value),
         purchasePrice: parseFloat(document.getElementById("purchasePrice").value),
-        salePrice: parseFloat(document.getElementById("salePrice").value)
+        salePrice: parseFloat(document.getElementById("salePrice").value),
+        minStock: parseInt(document.getElementById("minStock").value) || 5
       };
       
       try {
@@ -679,9 +786,11 @@
           document.getElementById("productId").value = product.id;
           document.getElementById("barcode").value = product.barcode;
           document.getElementById("name").value = product.name;
+          document.getElementById("category").value = product.category || "";
           document.getElementById("quantity").value = product.quantity;
           document.getElementById("purchasePrice").value = product.purchasePrice;
           document.getElementById("salePrice").value = product.salePrice;
+          document.getElementById("minStock").value = product.minStock || 5;
           
           currentEditId = product.id;
           
@@ -710,8 +819,9 @@
       }
     };
 
-    // البحث
-    searchInput.addEventListener("input", renderProducts);
+    // البحث والتصفية
+    searchInput.addEventListener("input", applyFilters);
+    categoryFilter.addEventListener("change", applyFilters);
 
     // التهيئة الأولية
     document.addEventListener("DOMContentLoaded", () => {
